@@ -8,30 +8,36 @@ import (
 	"net/http"
 )
 
-const (
-	//MainPost base steam api url
-	MainPost string = "https://api.steampowered.com/"
-)
-
-type mainstruct struct {
-	Response ResponseStruct `json:"response"`
+type Player struct {
+	SteamId                  string `json:"steamid"`
+	CommunityVisibilityState int    `json:"communityvisibilitystate"`
+	ProfileState             int    `json:"profilestate"`
+	PersonaName              string `json:"personaname"`
+	LastLogoff               int    `json:"lastlogoff"`
+	ProfileUrl               string `json:"profileurl"`
+	Avatar                   string `json:"avatar"`
+	AvatarMedium             string `json:"avatarmedium"`
+	AvatarFull               string `json:"avatarfull"`
+	PersonaState             int    `json:"personastate"`
+	RealName                 string `json:"realname"`
+	PrimaryClanId            int    `json:"primaryclanid"`
+	TimeCreated              int    `json:"timecreated"`
+	PersonaStateFlags        int    `json:"personastateflags"`
+	LocCountryCode           string `json:"loccountrycode"`
+	LocStateCode             string `json:"locstatecode"`
+	LocCityId                int    `json:"loccityid"`
 }
 
-// ResponseStruct model
-type ResponseStruct struct {
-	Players []PlayersStruct `json:"players"`
+type Mainstruct struct {
+	Response GetPlayerSummariesResponseBody
 }
 
-// PlayersStruct model
-type PlayersStruct struct {
-	SteamID    string `json:"steamid"`
-	ProfileURL string `json:"profileurl"`
+type GetPlayerSummariesResponseBody struct {
+	Players []Player
 }
-
 
 //GetPlayerSummaries: Input SteamID and collect user's all infos
-func GetPlayerSummaries(SteamID string, PrivyKey string) {
-	steamid := "76561197960361544"
+func GetPlayerSummaries(SteamID string, PrivyKey string) []Player {
 	resp, _ := http.Get("https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v2/?key=" + string(PrivKey) + "&steamids=" + string(steamid))
 
 	body, err := ioutil.ReadAll(resp.Body)
@@ -39,13 +45,13 @@ func GetPlayerSummaries(SteamID string, PrivyKey string) {
 		log.Fatalln(err)
 	}
 	textBytes := []byte(body)
-	main := mainstruct{}
+	main := Mainstruct{}
 	err = json.Unmarshal(textBytes, &main)
 	if err != nil {
 		fmt.Println(err)
-		return
+		return nil
 	}
-	fmt.Println(main.Response.Players)
+	return main.Response.Players
 }
 
 //GetPlayerBans input user's SteamID and get user's ban info

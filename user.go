@@ -40,7 +40,7 @@ type GetPlayerSummariesResponseBody struct {
 
 //GetPlayerSummaries: Input SteamID and collect user's all infos
 func GetPlayerSummaries(SteamID string, PrivyKey string) []Player {
-	resp, _ := http.Get("https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v2/?key=" + string(PrivKey) + "&steamids=" + string(steamid))
+	resp, _ := http.Get("https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v2/?key=" + string(PrivyKey) + "&steamids=" + string(SteamID))
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
@@ -58,12 +58,12 @@ func GetPlayerSummaries(SteamID string, PrivyKey string) []Player {
 
 //GetPlayerBans input user's SteamID and get user's ban info
 func GetPlayerBans(SteamID string, PrivyKey string) []Bans {
-	resp, err := http.Get(MainPost + "ISteamUser/GetPlayerBans/v1/?key=" + string(PrivyKey) + "&steamids=" + SteamID)
+	resp, err := http.Get("https://api.steampowered.com/ISteamUser/GetPlayerBans/v1/?key=" + string(PrivyKey) + "&steamids=" + SteamID)
 	if err != nil {
 		log.Println(err)
 	}
 	//We Read the response body on the line below.
-	body, err := ioutil.ReadAll(resp.Body)
+	body, _ := ioutil.ReadAll(resp.Body)
 	textBytes := []byte(body)
 	main := Mainstruct{}
 	err = json.Unmarshal(textBytes, &main)

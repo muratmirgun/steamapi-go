@@ -28,11 +28,6 @@ type PlayersStruct struct {
 	ProfileURL string `json:"profileurl"`
 }
 
-func errcheck(err error) {
-	if err != nil {
-		log.Fatalln(err)
-	}
-}
 
 //GetPlayerSummaries: Input SteamID and collect user's all infos
 func GetPlayerSummaries(SteamID string, PrivyKey string) {
@@ -56,10 +51,14 @@ func GetPlayerSummaries(SteamID string, PrivyKey string) {
 //GetPlayerBans input user's SteamID and get user's ban info
 func GetPlayerBans(SteamID string, PrivyKey string) {
 	resp, err := http.Get(MainPost + "ISteamUser/GetPlayerBans/v1/?key=" + string(PrivyKey) + "&steamids=" + SteamID)
-	errcheck(err)
+	if err != nil {
+		log.Println(err)
+	}
 	//We Read the response body on the line below.
 	body, err := ioutil.ReadAll(resp.Body)
-	errcheck(err)
+	if err != nil {
+		log.Println(err)
+	}
 	//Convert the body to type string
 	sb := string(body)
 	log.Printf(sb)
